@@ -19,8 +19,8 @@ typedef struct {
 } html_attribute_t;
 
 typedef enum {
-  BEGIN_TAG,
-  END_TAG,
+  OPEN_TAG,
+  CLOSE_TAG,
   SINGLETON_TAG,
   TEXT,
   COMMENT,

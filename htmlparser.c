@@ -87,8 +87,8 @@ void html_do_action(enum HTML_ACTION action, void * data) {
   case HTML_APPEND_SLASH_NEWLINE_APPEND_ACTION:
     parser->fragment.length += 2;
     break;
-  case HTML_BEGIN_TAG_ACTION:
-    event->type = BEGIN_TAG;
+  case HTML_OPEN_TAG_ACTION:
+    event->type = OPEN_TAG;
     event->e_start = parser->fragment.start;
     event->e_length = parser->fragment.length;
     event->attr_pos = 0;
@@ -99,8 +99,8 @@ void html_do_action(enum HTML_ACTION action, void * data) {
     event->e_length = parser->fragment.length;
     event->attr_pos = 0;
     break;
-  case HTML_END_TAG_ACTION:
-    event->type = END_TAG;
+  case HTML_CLOSE_TAG_ACTION:
+    event->type = CLOSE_TAG;
     event->e_start = parser->fragment.start;
     event->e_length = parser->fragment.length;
     break;
@@ -133,7 +133,7 @@ void html_do_action(enum HTML_ACTION action, void * data) {
 }
 
 uint8_t html_parser_get_tag(html_parser_t *parser, html_event_t *event, fragment_t *frag) {
-  if (event->type != BEGIN_TAG && event->type != END_TAG && event->type != SINGLETON_TAG) {
+  if (event->type != OPEN_TAG && event->type != CLOSE_TAG && event->type != SINGLETON_TAG) {
     return 0;
   }
 
@@ -155,7 +155,7 @@ uint8_t html_parser_get_next_attribute(html_parser_t *parser, html_event_t *even
   void * data[2];
   data[0] = attribute;
 
-  if (event->type != BEGIN_TAG && event->type != SINGLETON_TAG) {
+  if (event->type != OPEN_TAG && event->type != SINGLETON_TAG) {
     return 0;
   }
 

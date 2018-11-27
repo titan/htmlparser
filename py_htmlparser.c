@@ -102,7 +102,7 @@ static void event_dealloc(EventObject * self) {
 static PyObject * event_tag(EventObject * self, PyObject * Py_UNUSED(ignored)) {
   PyObject * tag = NULL;
   fragment_t frag;
-  if (BEGIN_TAG == self->e.type || END_TAG == self->e.type || SINGLETON_TAG == self->e.type) {
+  if (OPEN_TAG == self->e.type || CLOSE_TAG == self->e.type || SINGLETON_TAG == self->e.type) {
     html_parser_get_tag(self->p, &self->e, &frag);
     tag = PyUnicode_FromStringAndSize(self->p->buf + frag.start, frag.length);
     if (tag) {
@@ -200,7 +200,6 @@ typedef struct {
 } ParserObject;
 
 static void parser_dealloc(ParserObject * self) {
-  printf("parser dealloc \n");
   free(self->p.buf);
   Py_TYPE(self)->tp_free((PyObject *) self);
 }
@@ -306,8 +305,8 @@ PyMODINIT_FUNC PyInit_htmlparser(void) {
   if (m == NULL)
     return NULL;
 
-  PyModule_AddObject(m, "BEGIN_TAG", PyLong_FromLong(BEGIN_TAG));
-  PyModule_AddObject(m, "END_TAG", PyLong_FromLong(END_TAG));
+  PyModule_AddObject(m, "OPEN_TAG", PyLong_FromLong(OPEN_TAG));
+  PyModule_AddObject(m, "CLOSE_TAG", PyLong_FromLong(CLOSE_TAG));
   PyModule_AddObject(m, "SINGLETON_TAG", PyLong_FromLong(SINGLETON_TAG));
   PyModule_AddObject(m, "TEXT", PyLong_FromLong(TEXT));
   PyModule_AddObject(m, "COMMENT", PyLong_FromLong(COMMENT));
