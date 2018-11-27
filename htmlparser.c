@@ -21,6 +21,7 @@ uint8_t html_parser_get_next(html_parser_t *parser, html_event_t *event) {
   data[1] = event;
   char *buf = parser->buf;
   uint32_t html_state = HTML_READY_STATE;
+  uint32_t last_state = html_state;
   parser->fragment.start = 0;
   parser->fragment.length = 0;
 
@@ -28,6 +29,7 @@ uint8_t html_parser_get_next(html_parser_t *parser, html_event_t *event) {
   if (parser->position >= parser->length) {
     return 0;
   }
+  last_state = html_state;
 
   switch (buf[parser->position]) {
   case '<':
@@ -67,6 +69,9 @@ uint8_t html_parser_get_next(html_parser_t *parser, html_event_t *event) {
 
   parser->position ++;
   if (html_state == HTML_READY_STATE) {
+    return 1;
+  } else if (html_state == HTML_LESS_THAN_STATE && last_state == HTML_TEXT_STATE) {
+    parser->position --;
     return 1;
   } else {
     goto RETRY;
