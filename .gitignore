@@ -54,3 +54,4 @@ dkms.conf
 *-fsm.c
 *-fsm.h
 *.xlsx
+*-fsm-actions.h

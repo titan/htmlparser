@@ -91,8 +91,8 @@ static PyTypeObject AttributeType = {
 
 typedef struct {
   PyObject_HEAD
-  html_parser_t * p;
-  html_event_t e;
+  struct html_parser * p;
+  struct html_event e;
 } EventObject;
 
 static void event_dealloc(EventObject * self) {
@@ -101,7 +101,7 @@ static void event_dealloc(EventObject * self) {
 
 static PyObject * event_tag(EventObject * self, PyObject * Py_UNUSED(ignored)) {
   PyObject * tag = NULL;
-  fragment_t frag;
+  struct html_fragment frag;
   if (OPEN_TAG == self->e.type || CLOSE_TAG == self->e.type || SINGLETON_TAG == self->e.type) {
     html_parser_get_tag(self->p, &self->e, &frag);
     tag = PyUnicode_FromStringAndSize(self->p->buf + frag.start, frag.length);
@@ -117,7 +117,7 @@ static PyObject * event_tag(EventObject * self, PyObject * Py_UNUSED(ignored)) {
 
 static PyObject * event_next_attribute(EventObject * self, PyObject * Py_UNUSED(ignored)) {
   AttributeObject * a = NULL;
-  html_attribute_t attribute;
+  struct html_attribute attribute;
 
   if (html_parser_get_next_attribute(self->p, &self->e, &attribute) != 0) {
     a = (AttributeObject *) PyObject_New(AttributeObject, &AttributeType);
@@ -196,7 +196,7 @@ static PyTypeObject EventType = {
 
 typedef struct {
   PyObject_HEAD
-  html_parser_t p;
+  struct html_parser p;
 } ParserObject;
 
 static void parser_dealloc(ParserObject * self) {
@@ -205,7 +205,7 @@ static void parser_dealloc(ParserObject * self) {
 }
 
 static PyObject * parser_next(ParserObject * self, PyObject *Py_UNUSED(ignored)) {
-  html_event_t evt;
+  struct html_event evt;
   if (html_parser_get_next(&self->p, &evt) == 0) {
     Py_RETURN_NONE;
   } else {

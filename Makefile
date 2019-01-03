@@ -6,16 +6,16 @@ PYCFLAGS := `pkg-config --cflags python-3.7`
 PYLDFLAGS := `pkg-config --libs python-3.7`
 AR := ar
 
-LIBOBJS := htmlparser.o html-fsm.o attr-fsm.o
+LIBOBJS := html-fsm.o html-fsm-actions.o attr-fsm.o attr-fsm-actions.o htmlparser.o
 PYOBJS := py_htmlparser.o
-OBJS := $(LIBOBJS) $(PYOBJS)
 
 all: $(TARGET)
 
 libhtmlparser.a: $(LIBOBJS)
-	$(AR) -rcs $@ $(LIBOBJS)
+	$(AR) rcs $@ $(LIBOBJS)
+	ranlib $@
 
-htmlparser.so: $(PYOBJS) $(LIBOBJS)
+htmlparser.so: $(LIBOBJS) $(PYOBJS)
 	$(CC) $(PYLDFLAGS) $(PYOBJS) $(LIBOBJS) -shared -o $@
 
 clean:
@@ -24,10 +24,10 @@ clean:
 	rm -rf $(TARGET)
 
 html-fsm.c: html-fsm.txt
-	fsm-generator.py $< -d . --prefix html
+	naive-fsm-generator.py $< -d . --prefix html
 
 attr-fsm.c: attr-fsm.txt
-	fsm-generator.py $< -d . --prefix attr
+	naive-fsm-generator.py $< -d . --prefix attr
 
 %.o: %.c
 	$(CC) -c $(CFLAGS) $(PYCFLAGS) $< -o $@

@@ -3,22 +3,22 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-typedef struct {
+struct html_fragment {
   uint32_t start;
   size_t length;
-} fragment_t;
+};
 
-typedef struct {
-  fragment_t key;
-  fragment_t value;
+struct html_attribute {
+  struct html_fragment key;
+  struct html_fragment value;
 
 #define k_start  key.start
 #define k_length key.length
 #define v_start  value.start
 #define v_length value.length
-} html_attribute_t;
+};
 
-typedef enum {
+enum html_event_type {
   OPEN_TAG,
   CLOSE_TAG,
   SINGLETON_TAG,
@@ -27,27 +27,27 @@ typedef enum {
   SECTION,
   PROCESS,
   DECLARATION
-} html_event_type_t;
+};
 
-typedef struct {
-  html_event_type_t type;
-  fragment_t fragment;
+struct html_event {
+  enum html_event_type type;
+  struct html_fragment fragment;
   uint32_t attr_pos; /* Only used for START_TAG */
 
 #define e_start  fragment.start
 #define e_length fragment.length
-} html_event_t;
+};
 
-typedef struct {
-  char *buf;
+struct html_parser {
+  char * buf;
   uint32_t position;
   size_t length;
-  fragment_t fragment;
-} html_parser_t;
+  struct html_fragment fragment;
+};
 
-uint8_t html_parser_new(html_parser_t *parser, char *buf, size_t length);
-uint8_t html_parser_free(html_parser_t *parser);
-uint8_t html_parser_get_next(html_parser_t *parser, html_event_t *event);
-uint8_t html_parser_get_tag(html_parser_t *parser, html_event_t *event, fragment_t *frag);
-uint8_t html_parser_get_next_attribute(html_parser_t *parser, html_event_t *event, html_attribute_t *attributes);
+uint8_t html_parser_new(struct html_parser * parser, char * buf, size_t length);
+uint8_t html_parser_free(struct html_parser * parser);
+uint8_t html_parser_get_next(struct html_parser * parser, struct html_event * event);
+uint8_t html_parser_get_tag(struct html_parser * parser, struct html_event * event, struct html_fragment * frag);
+uint8_t html_parser_get_next_attribute(struct html_parser * parser, struct html_event * event, struct html_attribute * attributes);
 #endif
