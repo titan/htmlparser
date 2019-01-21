@@ -15,6 +15,13 @@ void attr_append_key(struct attr_context * ctx, enum ATTR_STATE state, enum ATTR
   ctx->attribute->key.length ++;
 }
 
+void attr_reset_value(struct attr_context * ctx, enum ATTR_STATE state, enum ATTR_EVENT event) {
+  (void) state;
+  (void) event;
+  ctx->attribute->value.start = 0;
+  ctx->attribute->value.length = 0;
+}
+
 void attr_start_value(struct attr_context * ctx, enum ATTR_STATE state, enum ATTR_EVENT event) {
   (void) state;
   (void) event;
