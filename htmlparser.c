@@ -32,6 +32,11 @@ uint8_t html_parser_get_next(struct html_parser * parser, struct html_event * ev
 
  RETRY:
   if (parser->position >= parser->length) {
+    bzero(event, sizeof(struct html_event));
+    html_state_machine_process(&fsm, HTML_EOF_EVENT);
+    if (event->e_length != 0) {
+      return 1;
+    }
     return 0;
   }
   last_state = fsm.state;
