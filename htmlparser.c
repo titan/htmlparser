@@ -1,4 +1,5 @@
 #include <ctype.h>
+#include <string.h>
 #include "htmlparser.h"
 #include "html-context.h"
 #include "html-fsm.h"
@@ -32,7 +33,7 @@ uint8_t html_parser_get_next(struct html_parser * parser, struct html_event * ev
 
  RETRY:
   if (parser->position >= parser->length) {
-    bzero(event, sizeof(struct html_event));
+    memset(event, 0, sizeof(struct html_event));
     html_state_machine_process(&fsm, HTML_EOF_EVENT);
     if (event->e_length != 0) {
       return 1;
@@ -123,6 +124,7 @@ uint8_t html_parser_get_next_attribute(struct html_parser * parser, struct html_
   struct attr_context ctx;
 
   ctx.attribute = attribute;
+  memset(attribute, 0, sizeof(struct html_attribute));
   attr_state_machine_init(&fsm, &ctx);
 
  RETRY:
